@@ -15,4 +15,4 @@ class AdminFilter(BoundFilter):
         if self.is_admin is None:
             return True
         config: Config = obj.bot.get('config')
-        return str(obj.from_user.id) in config.tg_bot.admin_ids
+        return obj.from_user.id in config.tg_bot.admin_ids
