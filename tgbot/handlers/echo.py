@@ -14,11 +14,11 @@ async def bot_echo(message: types.Message):
 
 
 async def bot_echo_all(message: types.Message, state: FSMContext):
-    state = await state.get_state()
+    state_name = await state.get_state()
     text = [
-        f'Эхо в состоянии {hcode(state)}',
+        f'Эхо в состоянии {hcode(state_name)}',
         'Содержание сообщения:',
-        hcode(state)
+        hcode(message.text)
     ]
     await message.answer('\n'.join(text))
 
