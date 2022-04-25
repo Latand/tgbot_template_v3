@@ -1,10 +1,9 @@
-from aiogram import Dispatcher
+from aiogram import Router
 from aiogram.types import Message
 
+user_router = Router()
 
+
+@user_router.message(commands=["start"])
 async def user_start(message: Message):
-    await message.reply("Hello, user!")
-
-
-def register_user(dp: Dispatcher):
-    dp.register_message_handler(user_start, commands=["start"], state="*")
+    await message.reply("Вітаю, звичайний користувач!")

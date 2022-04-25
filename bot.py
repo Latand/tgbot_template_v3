@@ -2,32 +2,35 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 
 from tgbot.config import load_config
-from tgbot.filters.admin import AdminFilter
-from tgbot.handlers.admin import register_admin
-from tgbot.handlers.echo import register_echo
-from tgbot.handlers.user import register_user
-from tgbot.middlewares.db import DbMiddleware
+from tgbot.handlers.admin import admin_router
+from tgbot.handlers.echo import echo_router
+from tgbot.handlers.user import user_router
+from tgbot.middlewares.config import ConfigMiddleware
+from tgbot.services import broadcaster
 
 logger = logging.getLogger(__name__)
 
 
-def register_all_middlewares(dp):
-    dp.setup_middleware(DbMiddleware())
+async def on_startup(bot: Bot, admin_ids: list[int]):
+    await broadcaster.broadcast(bot, admin_ids, "Бот був запущений")
 
 
-def register_all_filters(dp):
-    dp.filters_factory.bind(AdminFilter)
+def register_global_middlewares(dp: Dispatcher, config):
+    dp.message.outer_middleware(ConfigMiddleware(config))
+    dp.callback_query.outer_middleware(ConfigMiddleware(config))
 
 
 def register_all_handlers(dp):
-    register_admin(dp)
-    register_user(dp)
+    for router in [
+        admin_router,
+        user_router,
+        echo_router,
 
-    register_echo(dp)
+    ]:
+        dp.include_router(router)
 
 
 async def main():
@@ -38,27 +41,19 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
 
-    storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
+    storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-    dp = Dispatcher(bot, storage=storage)
+    dp = Dispatcher(storage=storage)
 
-    bot['config'] = config
-
-    register_all_middlewares(dp)
-    register_all_filters(dp)
     register_all_handlers(dp)
+    register_global_middlewares(dp, config)
 
-    # start
-    try:
-        await dp.start_polling()
-    finally:
-        await dp.storage.close()
-        await dp.storage.wait_closed()
-        await bot.session.close()
+    await on_startup(bot, config.tg_bot.admin_ids)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        logger.error("Bot stopped!")
+        logger.error("Бот був вимкнений!")
