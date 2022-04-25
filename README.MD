@@ -30,6 +30,10 @@ async def user_start(message):
 
 Заходимо у файл `bot.py` і додаємо всі роутери в нього:
 ```python
+from tgbot.handlers.admin import admin_router
+from tgbot.handlers.echo import echo_router
+from tgbot.handlers.user import user_router
+
 def register_all_handlers(dp):
     for router in [
         admin_router,
