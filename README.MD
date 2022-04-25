@@ -34,7 +34,12 @@ from tgbot.handlers.admin import admin_router
 from tgbot.handlers.echo import echo_router
 from tgbot.handlers.user import user_router
 
-def register_all_handlers(dp):
+...
+
+async def main():
+   
+   ...
+
     for router in [
         admin_router,
         user_router,

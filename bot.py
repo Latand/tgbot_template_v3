@@ -23,16 +23,6 @@ def register_global_middlewares(dp: Dispatcher, config):
     dp.callback_query.outer_middleware(ConfigMiddleware(config))
 
 
-def register_all_handlers(dp):
-    for router in [
-        admin_router,
-        user_router,
-        echo_router,
-
-    ]:
-        dp.include_router(router)
-
-
 async def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -45,7 +35,13 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(storage=storage)
 
-    register_all_handlers(dp)
+    for router in [
+        admin_router,
+        user_router,
+        echo_router
+    ]:
+        dp.include_router(router)
+
     register_global_middlewares(dp, config)
 
     await on_startup(bot, config.tg_bot.admin_ids)
