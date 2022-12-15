@@ -1,11 +1,11 @@
 from aiogram import types, Router, F
-from aiogram.dispatcher.fsm.context import FSMContext
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.markdown import hcode
 
 echo_router = Router()
 
 
-@echo_router.message(F.text, state=None)
+@echo_router.message(F.text)
 async def bot_echo(message: types.Message):
     text = [
         "Ехо без стану.",
