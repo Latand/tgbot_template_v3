@@ -23,7 +23,7 @@ class TgBot:
 class RedisConfig:
     redis_pass: Optional[str]
     redis_port: Optional[int]
-    redis_host: Optiona[str]
+    redis_host: Optional[str]
 
 
 @dataclass
