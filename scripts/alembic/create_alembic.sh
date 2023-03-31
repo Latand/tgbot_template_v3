@@ -1,1 +1,1 @@
-alembic init -t async migrationsy
+alembic init -t async migrations
