@@ -1,8 +1,10 @@
 import asyncio
 import logging
 
+import betterlogging as bl
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
 from tgbot.config import load_config
 from tgbot.handlers.admin import admin_router
@@ -12,6 +14,8 @@ from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.services import broadcaster
 
 logger = logging.getLogger(__name__)
+log_level = logging.INFO
+bl.basic_colorized_config(level=log_level)
 
 
 async def on_startup(bot: Bot, admin_ids: list[int]):
@@ -30,8 +34,10 @@ async def main():
     )
     logger.info("Starting bot")
     config = load_config(".env")
-
-    storage = MemoryStorage()
+    if config.tg_bot.use_redis:
+        storage = RedisStorage(config.redis.dsn(), key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True))
+    else:
+        storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(storage=storage)
 
