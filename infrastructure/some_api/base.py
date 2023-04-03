@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from yarl import URL
 
 
+# Taken from here: https://github.com/Olegt0rr/WebServiceTemplate/blob/main/app/core/base_client.py
 class BaseClient:
     """Represents base API client."""
 
