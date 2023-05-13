@@ -1,5 +1,0 @@
-aiogram>=3.0.0b7
-environs~=9.0
-uvicorn
-fastapi
-betterlogging
