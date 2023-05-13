@@ -1,1 +1,1 @@
-## Bot template for aiogram < 3.0
+## Bot template for aiogram > 3.0
