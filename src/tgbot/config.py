@@ -1,90 +1,67 @@
-from dataclasses import dataclass
-from typing import Optional
+"""Setting up the configuration for the bot"""
 
-from environs import Env
+import logging
+import sys
+from os import path
+from pathlib import Path
 
-
-@dataclass
-class DbConfig:
-    host: str
-    password: str
-    user: str
-    database: str
-    port: int = 5432
-
-    # For SQLAlchemy
-    # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> URL:
-    #     if not host:
-    #         host = self.host
-    #     if not port:
-    #         port = self.port
-    #     uri = URL.create(
-    #         drivername=f"postgresql+{driver}",
-    #         username=self.user,
-    #         password=self.password,
-    #         host=host,
-    #         port=port,
-    #         database=self.database,
-    #     )
-    #     return uri.render_as_string(hide_password=False)
+from environs import Env, EnvError
 
 
-@dataclass
-class TgBot:
-    token: str
-    admin_ids: list[int]
-    use_redis: bool
+# Change DEBUG to False when running on a production server
+DEBUG: bool = True
 
 
-@dataclass
-class RedisConfig:
-    redis_pass: Optional[str]
-    redis_port: Optional[int]
-    redis_host: Optional[str]
-
-    def dsn(self) -> str:
-        if self.redis_pass:
-            return f"redis://:{self.redis_pass}@{self.redis_host}:{self.redis_port}/0"
-        else:
-            return f"redis://{self.redis_host}:{self.redis_port}/0"
+# Path settings
+_BASE_DIR: Path = Path(__file__).resolve().parent.parent
+BOT_LOGO: str = path.normpath(path.join(_BASE_DIR, "tgbot/assets/img/bot_logo.jpg"))
+ENV_FILE: str = path.normpath(path.join(_BASE_DIR, ".env"))
+LOG_FILE: str = path.normpath(path.join(_BASE_DIR, "tgbot.log"))
 
 
-@dataclass
-class Miscellaneous:
-    other_params: str = None
+# Disables full traceback of errors in the log file
+if not DEBUG:
+    sys.tracebacklimit = 0
+
+# Logger config
+logger: logging.Logger = logging.getLogger(__name__)
+logging.basicConfig(
+    filename=None if DEBUG else LOG_FILE,
+    encoding="utf-8",
+    format=f"[%(asctime)s] %(levelname)-8s {'%(filename)s:%(lineno)d - ' if DEBUG else ''}%(name)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+)
 
 
-@dataclass
-class Config:
-    tg_bot: TgBot
-    misc: Miscellaneous
-    db: DbConfig = None
-    redis: RedisConfig = None
+class BotConfig:
+    """Reads variables from the .env file"""
+
+    def __init__(self, path_to_env_file: str) -> None:
+        """Initializing a class or terminating a program if no .env file is found"""
+        if not path.exists(path=path_to_env_file):
+            logger.critical("The .env file was not found in the path %s", path_to_env_file)
+            sys.exit(1)
+        self._env: Env = Env()
+        self._env.read_env(path=path_to_env_file, recurse=False)
+
+    @property
+    def token(self) -> str:
+        """Returns the bot token or terminates the program in case of an error"""
+        try:
+            return str(self._env.str("BOT_TOKEN"))
+        except EnvError as exc:
+            logger.critical("BOT_TOKEN not found: %s", repr(exc))
+            sys.exit(repr(exc))
+
+    @property
+    def admin_ids(self) -> tuple[int, ...] | None:
+        """Returns administrator IDs or None if ADMINS is not set in the .env file"""
+        try:
+            return tuple(map(int, self._env.list("ADMINS")))
+        except (EnvError, ValueError) as exc:
+            logger.warning("ADMINS ids not found: %s", repr(exc))
+            return None
 
 
-def load_config(path: str = None) -> Config:
-    env = Env()
-    env.read_env(path)
-
-    return Config(
-        tg_bot=TgBot(
-            token=env.str("BOT_TOKEN"),
-            admin_ids=list(map(int, env.list("ADMINS"))),
-            use_redis=env.bool("USE_REDIS")
-        ),
-
-        # db=DbConfig(
-        #     host=env.str('DB_HOST'),
-        #     password=env.str('POSTGRES_PASSWORD'),
-        #     user=env.str('POSTGRES_USER'),
-        #     database=env.str('POSTGRES_DB'),
-        # ),
-
-        # redis=RedisConfig(
-        #     redis_pass=env.str("REDIS_PASSWORD"),
-        #     redis_port=env.int("REDIS_PORT"),
-        #     redis_host=env.str("REDIS_HOST"),
-        # ),
-
-        misc=Miscellaneous()
-    )
+bot_config = BotConfig(path_to_env_file=ENV_FILE)
