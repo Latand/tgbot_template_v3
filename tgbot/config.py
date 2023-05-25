@@ -13,7 +13,7 @@ class DbConfig:
     port: int = 5432
 
     # For SQLAlchemy
-    # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> URL:
+    # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> str:
     #     if not host:
     #         host = self.host
     #     if not port:
