@@ -40,15 +40,26 @@ async def send_message(
     return False
 
 
-async def broadcast(bot, users, text) -> int:
+async def broadcast(
+        bot: Bot,
+        users: list[Union[str, int]],
+        text: str,
+        disable_notification: bool = False,
+        reply_markup: InlineKeyboardMarkup = None,
+) -> int:
     """
-    Simple broadcaster
-    :return: Count of messages
+    Simple broadcaster.
+    :param bot: Bot instance.
+    :param users: List of users.
+    :param text: Text of the message.
+    :param disable_notification: Disable notification or not.
+    :param reply_markup: Reply markup.
+    :return: Count of messages.
     """
     count = 0
     try:
         for user_id in users:
-            if await send_message(bot, user_id, text):
+            if await send_message(bot, user_id, text, disable_notification, reply_markup):
                 count += 1
             await asyncio.sleep(0.05)  # 20 messages per second (Limit: 30 messages per second)
     finally:
