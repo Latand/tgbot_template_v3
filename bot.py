@@ -39,8 +39,7 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(storage=storage)
 
-    for router in routers_list:
-        dp.include_router(router)
+    dp.include_routers(*routers_list)
 
     register_global_middlewares(dp, config)
 
