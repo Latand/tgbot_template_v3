@@ -1,19 +1,37 @@
 import asyncio
 import logging
+from typing import Union
 
 from aiogram import Bot
 from aiogram import exceptions
+from aiogram.types import InlineKeyboardMarkup
 
 
-async def send_message(bot: Bot, user_id, text: str, disable_notification: bool = False) -> bool:
+async def send_message(
+        bot: Bot,
+        user_id: Union[int, str],
+        text: str,
+        disable_notification: bool = False,
+        reply_markup: InlineKeyboardMarkup = None,
+) -> bool:
+    """
+    Safe messages sender
+
+    :param bot: Bot instance.
+    :param user_id: user id. If str - must contain only digits.
+    :param text: text of the message.
+    :param disable_notification: disable notification or not.
+    :param reply_markup: reply markup.
+    :return: success.
+    """
     try:
-        await bot.send_message(user_id, text, disable_notification=disable_notification)
+        await bot.send_message(user_id, text, disable_notification=disable_notification, reply_markup=reply_markup)
     except exceptions.TelegramForbiddenError:
         logging.error(f"Target [ID:{user_id}]: got TelegramForbiddenError")
     except exceptions.TelegramRetryAfter as e:
         logging.error(f"Target [ID:{user_id}]: Flood limit is exceeded. Sleep {e.retry_after} seconds.")
         await asyncio.sleep(e.retry_after)
-        return await send_message(bot, user_id, text)  # Recursive call
+        return await send_message(bot, user_id, text, disable_notification, reply_markup)  # Recursive call
     except exceptions.TelegramAPIError:
         logging.exception(f"Target [ID:{user_id}]: failed")
     else:
