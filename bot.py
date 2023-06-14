@@ -20,9 +20,12 @@ async def on_startup(bot: Bot, admin_ids: list[int]):
     await broadcaster.broadcast(bot, admin_ids, "Бот був запущений")
 
 
-def register_global_middlewares(dp: Dispatcher, config):
+def register_global_middlewares(dp: Dispatcher, config, session_pool=None):
     dp.message.outer_middleware(ConfigMiddleware(config))
     dp.callback_query.outer_middleware(ConfigMiddleware(config))
+
+    # dp.message.outer_middleware(DatabaseMiddleware(session_pool))
+    # dp.callback_query.outer_middleware(DatabaseMiddleware(session_pool))
 
 
 async def main():
@@ -33,15 +36,22 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
     if config.tg_bot.use_redis:
-        storage = RedisStorage.from_url(config.redis.dsn(), key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True))
+        storage = RedisStorage.from_url(config.redis.dsn(),
+                                        key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True))
     else:
         storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(storage=storage)
+    # engine = create_engine(config.db)
+    # session_pool = create_session_pool(engine)
 
     dp.include_routers(*routers_list)
 
-    register_global_middlewares(dp, config)
+    register_global_middlewares(
+        dp,
+        config,
+        # session_pool=session_pool,
+    )
 
     await on_startup(bot, config.tg_bot.admin_ids)
     await dp.start_polling(bot)
