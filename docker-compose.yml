@@ -69,9 +69,9 @@ services:
 #    build:
 #      context: .
 #      dockerfile: infrastructure/webhook/Dockerfile
-#    working_dir: "/usr/src/app/${BOT_NAME}"
+#    working_dir: "/usr/src/app/${WEBHOOK_APP_NAME}"
 #    volumes:
-#      - .:/usr/src/app/${BOT_NAME}
+#      - .:/usr/src/app/${WEBHOOK_APP_NAME}
 #    command: [ "uvicorn", "infrastructure.webhook.app:app", "--host", "0.0.0.0", "--port", "8000" ]
 #    restart: always
 #    env_file:

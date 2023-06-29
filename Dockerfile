@@ -1,8 +1,9 @@
-FROM python:3.10-slim
-ENV BOT_NAME=$BOT_NAME
+FROM python:3.11-slim
+# get BOT_NAME from .env !
+ENV BOT_NAME=mybotname
 
-WORKDIR /usr/src/app/"${BOT_NAME:-tg_bot}"
+WORKDIR /usr/src/app/${BOT_NAME}
 
-COPY requirements.txt /usr/src/app/"${BOT_NAME:-tg_bot}"
-RUN pip install -r /usr/src/app/"${BOT_NAME:-tg_bot}"/requirements.txt
-COPY . /usr/src/app/"${BOT_NAME:-tg_bot}"
+COPY requirements.txt /usr/src/app/${BOT_NAME}
+RUN pip install -r /usr/src/app/${BOT_NAME}/requirements.txt
+COPY . /usr/src/app/${BOT_NAME}
