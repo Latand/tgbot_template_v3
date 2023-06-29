@@ -13,20 +13,24 @@ class DbConfig:
     port: int = 5432
 
     # For SQLAlchemy
-    # def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> str:
-    #     if not host:
-    #         host = self.host
-    #     if not port:
-    #         port = self.port
-    #     uri = URL.create(
-    #         drivername=f"postgresql+{driver}",
-    #         username=self.user,
-    #         password=self.password,
-    #         host=host,
-    #         port=port,
-    #         database=self.database,
-    #     )
-    #     return uri.render_as_string(hide_password=False)
+    def construct_sqlalchemy_url(self, driver="asyncpg", host=None, port=None) -> str:
+        # TODO: If you're using SQLAlchemy, move the import to the top of the file!
+        from sqlalchemy.engine.url import URL
+
+
+        if not host:
+            host = self.host
+        if not port:
+            port = self.port
+        uri = URL.create(
+            drivername=f"postgresql+{driver}",
+            username=self.user,
+            password=self.password,
+            host=host,
+            port=port,
+            database=self.database,
+        )
+        return uri.render_as_string(hide_password=False)
 
 
 @dataclass
