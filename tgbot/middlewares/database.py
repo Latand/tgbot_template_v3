@@ -11,10 +11,10 @@ class DatabaseMiddleware(BaseMiddleware):
         self.session_pool = session_pool
 
     async def __call__(
-            self,
-            handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-            event: Message,
-            data: Dict[str, Any],
+        self,
+        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+        event: Message,
+        data: Dict[str, Any],
     ) -> Any:
         async with self.session_pool() as session:
             repo = RequestsRepo(session)

@@ -19,7 +19,5 @@ bot = Bot(token=config.tg_bot.token)
 
 
 @app.post("/webhook")
-async def webhook_endpoint(
-        request: fastapi.Request
-):
+async def webhook_endpoint(request: fastapi.Request):
     return JSONResponse(status_code=200, content={"status": "ok"})

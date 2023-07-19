@@ -43,13 +43,13 @@ class BaseClient:
         max_time=60,
     )
     async def _make_request(
-            self,
-            method: str,
-            url: str | URL,
-            params: Mapping[str, str] | None = None,
-            json: Mapping[str, str] | None = None,
-            headers: Mapping[str, str] | None = None,
-            data: FormData | None = None,
+        self,
+        method: str,
+        url: str | URL,
+        params: Mapping[str, str] | None = None,
+        json: Mapping[str, str] | None = None,
+        headers: Mapping[str, str] | None = None,
+        data: FormData | None = None,
     ) -> tuple[int, dict[str, Any]]:
         """Make request and return decoded json response."""
         session = await self._get_session()
@@ -62,7 +62,7 @@ class BaseClient:
             params,
         )
         async with session.request(
-                method, url, params=params, json=json, headers=headers, data=data
+            method, url, params=params, json=json, headers=headers, data=data
         ) as response:
             status = response.status
             if status != 200:

@@ -8,11 +8,11 @@ from aiogram.types import InlineKeyboardMarkup
 
 
 async def send_message(
-        bot: Bot,
-        user_id: Union[int, str],
-        text: str,
-        disable_notification: bool = False,
-        reply_markup: InlineKeyboardMarkup = None,
+    bot: Bot,
+    user_id: Union[int, str],
+    text: str,
+    disable_notification: bool = False,
+    reply_markup: InlineKeyboardMarkup = None,
 ) -> bool:
     """
     Safe messages sender
@@ -25,13 +25,22 @@ async def send_message(
     :return: success.
     """
     try:
-        await bot.send_message(user_id, text, disable_notification=disable_notification, reply_markup=reply_markup)
+        await bot.send_message(
+            user_id,
+            text,
+            disable_notification=disable_notification,
+            reply_markup=reply_markup,
+        )
     except exceptions.TelegramForbiddenError:
         logging.error(f"Target [ID:{user_id}]: got TelegramForbiddenError")
     except exceptions.TelegramRetryAfter as e:
-        logging.error(f"Target [ID:{user_id}]: Flood limit is exceeded. Sleep {e.retry_after} seconds.")
+        logging.error(
+            f"Target [ID:{user_id}]: Flood limit is exceeded. Sleep {e.retry_after} seconds."
+        )
         await asyncio.sleep(e.retry_after)
-        return await send_message(bot, user_id, text, disable_notification, reply_markup)  # Recursive call
+        return await send_message(
+            bot, user_id, text, disable_notification, reply_markup
+        )  # Recursive call
     except exceptions.TelegramAPIError:
         logging.exception(f"Target [ID:{user_id}]: failed")
     else:
@@ -41,11 +50,11 @@ async def send_message(
 
 
 async def broadcast(
-        bot: Bot,
-        users: list[Union[str, int]],
-        text: str,
-        disable_notification: bool = False,
-        reply_markup: InlineKeyboardMarkup = None,
+    bot: Bot,
+    users: list[Union[str, int]],
+    text: str,
+    disable_notification: bool = False,
+    reply_markup: InlineKeyboardMarkup = None,
 ) -> int:
     """
     Simple broadcaster.
@@ -59,9 +68,13 @@ async def broadcast(
     count = 0
     try:
         for user_id in users:
-            if await send_message(bot, user_id, text, disable_notification, reply_markup):
+            if await send_message(
+                bot, user_id, text, disable_notification, reply_markup
+            ):
                 count += 1
-            await asyncio.sleep(0.05)  # 20 messages per second (Limit: 30 messages per second)
+            await asyncio.sleep(
+                0.05
+            )  # 20 messages per second (Limit: 30 messages per second)
     finally:
         logging.info(f"{count} messages successful sent.")
 

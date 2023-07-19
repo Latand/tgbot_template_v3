@@ -1,6 +1,5 @@
 from aiogram import Router
 from aiogram.filters import CommandStart
-from aiogram.fsm.state import State
 from aiogram.types import Message
 
 from tgbot.filters.admin import AdminFilter

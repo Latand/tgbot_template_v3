@@ -9,7 +9,6 @@ routers_list = [
     echo_router,  # echo_router must be last
 ]
 
-
 __all__ = [
     "routers_list",
 ]

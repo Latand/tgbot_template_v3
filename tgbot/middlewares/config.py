@@ -9,10 +9,10 @@ class ConfigMiddleware(BaseMiddleware):
         self.config = config
 
     async def __call__(
-            self,
-            handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-            event: Message,
-            data: Dict[str, Any]
+        self,
+        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+        event: Message,
+        data: Dict[str, Any],
     ) -> Any:
-        data['config'] = self.config
+        data["config"] = self.config
         return await handler(event, data)
