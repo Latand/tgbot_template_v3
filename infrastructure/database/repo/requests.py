@@ -41,7 +41,7 @@ if __name__ == "__main__":
         async with session_pool() as session:
             repo = RequestsRepo(session)
 
-            # Replace "user_details" with the actual values
+            # Replace user details with the actual values
             user = await repo.users.get_or_create_user(
                 user_id=12356,
                 full_name="John Doe",
