@@ -16,7 +16,7 @@ class UserRepo(BaseRepo):
         username: Optional[str] = None,
     ):
         """
-        Creates a new user in the database.
+        Creates or updates a new user in the database and returns the user object.
         :param user_id: The user's ID.
         :param full_name: The user's full name.
         :param language: The user's language.
