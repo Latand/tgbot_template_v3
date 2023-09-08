@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Literal
 
 from environs import Env
 
@@ -168,6 +168,7 @@ class Config:
 
     tg_bot: TgBot
     misc: Miscellaneous
+    environment: Literal["dev", "prod"]
     db: Optional[DbConfig] = None
     redis: Optional[RedisConfig] = None
 
@@ -187,6 +188,7 @@ def load_config(path: str = None) -> Config:
 
     return Config(
         tg_bot=TgBot.from_env(env),
+        environment=env.str("ENVIRONMENT", "dev"),
         # db=DbConfig.from_env(env),
         # redis=RedisConfig.from_env(env),
         misc=Miscellaneous(),
