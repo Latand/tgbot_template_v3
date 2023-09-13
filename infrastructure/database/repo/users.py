@@ -24,7 +24,7 @@ class UserRepo(BaseRepo):
         :return: User object, None if there was an error while making a transaction.
         """
 
-        insert_stmt = select(User).from_statement(
+        insert_stmt = (
             insert(User)
             .values(
                 user_id=user_id,
@@ -32,7 +32,6 @@ class UserRepo(BaseRepo):
                 full_name=full_name,
                 language=language,
             )
-            .returning(User)
             .on_conflict_do_update(
                 index_elements=[User.user_id],
                 set_=dict(
@@ -40,8 +39,9 @@ class UserRepo(BaseRepo):
                     full_name=full_name,
                 ),
             )
+            .returning(User)
         )
-        result = await self.session.scalars(insert_stmt)
+        result = await self.session.execute(insert_stmt)
 
         await self.session.commit()
-        return result.first()
+        return result.scalar_one()
