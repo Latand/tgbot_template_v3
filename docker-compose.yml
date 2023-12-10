@@ -2,31 +2,28 @@ version: '3.3'
 
 services:
   bot:
-    image: "${BOT_IMAGE_NAME}"
-    container_name: "${BOT_CONTAINER_NAME}"
+    image: "bot"
     stop_signal: SIGINT
     build:
       context: .
-    working_dir: "/usr/src/app/${BOT_NAME}"
+    working_dir: "/usr/src/app/bot"
     volumes:
-      - .:/usr/src/app/${BOT_NAME}
+      - .:/usr/src/app/bot
     command: python3 -m bot
     restart: always
     env_file:
       - ".env"
-    networks:
-      - tg_bot
 
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+
 #
 #  #   To enable postgres uncomment the following lines
 #  #  http://pgconfigurator.cybertec.at/ For Postgres Configuration
 #  pg_database:
-#    container_name: "${PG_CONTAINER_NAME}"
 #    image: postgres:13-alpine
 #    ports:
 #      - "5439:5432" # Change if you like! 5439 is external to container
@@ -46,38 +43,30 @@ services:
 #      options:
 #        max-size: "200k"
 #        max-file: "10"
-#    networks:
-#      - tg_bot
 #
 #  #   To enable redis cache uncomment the following lines
 #  redis_cache:
 #    image: redis:6.2-alpine
-#    container_name: "${REDIS_CONTAINER_NAME}"
 #    restart: always
 #    command: redis-server --port $REDIS_PORT --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
 #    env_file:
 #      - ".env"
 #    volumes:
-#      - ./cache:/data
-#    networks:
-#      - tg_bot
+#      - cache:/data
 #
-#  webhook:
-#    image: "webhook"
-#    container_name: "${WEBHOOK_CONTAINER_NAME}"
+#  api:
+#    image: "api"
 #    stop_signal: SIGINT
 #    build:
 #      context: .
-#      dockerfile: infrastructure/webhook/Dockerfile
-#    working_dir: "/usr/src/app/${WEBHOOK_APP_NAME}"
+#      dockerfile: infrastructure/api/Dockerfile
+#    working_dir: "/usr/src/app/api"
 #    volumes:
-#      - .:/usr/src/app/${WEBHOOK_APP_NAME}
-#    command: [ "uvicorn", "infrastructure.webhook.app:app", "--host", "0.0.0.0", "--port", "8000" ]
+#      - .:/usr/src/app/api
+#    command: [ "uvicorn", "infrastructure.api.app:app", "--host", "0.0.0.0", "--port", "8000" ]
 #    restart: always
 #    env_file:
 #      - ".env"
-#    networks:
-#      - tg_bot
 #    logging:
 #      driver: "json-file"
 #      options:
@@ -93,14 +82,9 @@ services:
 #      - '80:80'
 #    volumes:
 #      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-#    networks:
-#      - tg_bot
 
-
-networks:
-  tg_bot:
-    driver: bridge
 
 # Uncomment the following lines if you want to use a volume for the database
 #volumes:
 #  pgdata: { }
+#  cache: { }
