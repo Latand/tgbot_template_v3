@@ -36,26 +36,38 @@ async def user_start(message):
     await message.reply("Вітаю, звичайний користувач!")
 ```
 
-Заходимо у файл `bot.py` і додаємо всі роутери в нього:
+Заходимо у файл `handlers/__init__.py` і додаємо всі роутери в нього:
 ```python
-from tgbot.handlers.admin import admin_router
-from tgbot.handlers.echo import echo_router
-from tgbot.handlers.user import user_router
+from .admin import admin_router
+from .echo import echo_router
+from .user import user_router
+
+...
+
+
+routers_list = [
+    admin_router,
+    user_router,
+    echo_router,  # echo_router must be last
+]
+
+```
+### Як додати хендлери до нашого бота:
+Переходимо до файлу  `bot.py` та розпаковуємо наші хендлери:
+```python
+from tgbot.handlers import routers_list
 
 ...
 
 async def main():
    
-   ...
+    ...
 
-    for router in [
-        admin_router,
-        user_router,
-        ...,
-        echo_router,
+   dp.include_routers(*routers_list)
 
-    ]:
-        dp.include_router(router)
+    ...
+
+
 ```
 
 ### Туторіали з aiogram v3
