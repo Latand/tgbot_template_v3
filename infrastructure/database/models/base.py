@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.ext.declarative import declared_attr
@@ -22,4 +22,5 @@ class TableNameMixin:
 
 
 class TimestampMixin:
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP, server_default=func.now())
