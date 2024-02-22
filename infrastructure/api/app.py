@@ -13,8 +13,7 @@ log_level = logging.INFO
 bl.basic_colorized_config(level=log_level)
 log = logging.getLogger(__name__)
 
-config: Config = load_config()
-# session_pool = create_session_pool(config.db)
+config: Config = load_config(".env")
 bot = Bot(token=config.tg_bot.token)
 
 
