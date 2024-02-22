@@ -26,7 +26,7 @@ services:
   # pg_database:
   #  image: postgres:13-alpine
   #  ports:
-  #    - "5429:5432" # Change if you like! 5439 is external to container
+  #    - "5439:5432" # Change if you like! 5439 is external to container
   #  restart: always
   #  volumes:
   #    - pgdata:/var/lib/postgresql/data
