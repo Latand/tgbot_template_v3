@@ -20,71 +20,71 @@ services:
         max-size: "200k"
         max-file: "10"
 
-#
-#  #   To enable postgres uncomment the following lines
-#  #  http://pgconfigurator.cybertec.at/ For Postgres Configuration
-#  pg_database:
-#    image: postgres:13-alpine
-#    ports:
-#      - "5439:5432" # Change if you like! 5439 is external to container
-#    restart: always
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
-#    command: "postgres -c max_connections=150
-#             -c shared_buffers=512MB -c effective_cache_size=1536MB
-#             -c maintenance_work_mem=128MB -c checkpoint_completion_target=0.9 -c wal_buffers=16MB
-#             -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200
-#             -c work_mem=3495kB -c min_wal_size=1GB -c max_wal_size=4GB -c max_worker_processes=2
-#             -c max_parallel_workers_per_gather=1 -c max_parallel_workers=2 -c max_parallel_maintenance_workers=1"
-#    env_file:
-#      - '.env'
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "200k"
-#        max-file: "10"
-#
-#  #   To enable redis cache uncomment the following lines
-#  redis_cache:
-#    image: redis:6.2-alpine
-#    restart: always
-#    command: redis-server --port $REDIS_PORT --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
-#    env_file:
-#      - ".env"
-#    volumes:
-#      - cache:/data
-#
-#  api:
-#    image: "api"
-#    stop_signal: SIGINT
-#    build:
-#      context: .
-#      dockerfile: infrastructure/api/Dockerfile
-#    working_dir: "/usr/src/app/api"
-#    volumes:
-#      - .:/usr/src/app/api
-#    command: [ "uvicorn", "infrastructure.api.app:app", "--host", "0.0.0.0", "--port", "8000" ]
-#    restart: always
-#    env_file:
-#      - ".env"
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: "200k"
-#        max-file: "10"
-#
-#  reverse-proxy:
-#    container_name: nginx-reverse-proxy
-#    stop_signal: SIGINT
-#    restart: always
-#    image: nginx:latest
-#    ports:
-#      - '80:80'
-#    volumes:
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
+  #   To enable postgres uncomment the following lines
+  #  http://pgconfigurator.cybertec.at/ For Postgres Configuration
+  # pg_database:
+  #  image: postgres:13-alpine
+  #  ports:
+  #    - "5429:5432" # Change if you like! 5439 is external to container
+  #  restart: always
+  #  volumes:
+  #    - pgdata:/var/lib/postgresql/data
+  #  command: "postgres -c max_connections=150
+  #           -c shared_buffers=512MB -c effective_cache_size=1536MB
+  #           -c maintenance_work_mem=128MB -c checkpoint_completion_target=0.9 -c wal_buffers=16MB
+  #           -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200
+  #           -c work_mem=3495kB -c min_wal_size=1GB -c max_wal_size=4GB -c max_worker_processes=2
+  #           -c max_parallel_workers_per_gather=1 -c max_parallel_workers=2 -c max_parallel_maintenance_workers=1"
+  #  env_file:
+  #    - '.env'
+  #  logging:
+  #    driver: "json-file"
+  #    options:
+  #      max-size: "200k"
+  #      max-file: "10"
+
+  ##  To enable redis cache uncomment the following lines
+  # redis_cache:
+  #  image: redis:6.2-alpine
+  #  restart: always
+  #  command: redis-server --port $REDIS_PORT --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
+  #  env_file:
+  #    - ".env"
+  #  volumes:
+  #    - cache:/data
+
+  # api:
+  #  image: "api"
+  #  stop_signal: SIGINT
+  #  build:
+  #    context: ./infrastructure
+  #    dockerfile: Dockerfile
+  #  working_dir: "/usr/src/app/api"
+  #  volumes:
+  #    - .:/usr/src/app/api
+  #  command: [ "uvicorn", "infrastructure.api.app:app", "--host", "0.0.0.0", "--port", "8000" ]
+  #  restart: always
+  #  env_file:
+  #    - ".env"
+  #  logging:
+  #    driver: "json-file"
+  #    options:
+  #      max-size: "200k"
+  #      max-file: "10"
+
+  # reverse-proxy:
+  #  container_name: nginx-reverse-proxy
+  #  stop_signal: SIGINT
+  #  restart: always
+  #  image: nginx:latest
+  #  ports:
+  #    - '80:80'
+  #  volumes:
+  #    - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
 
-# Uncomment the following lines if you want to use a volume for the database
-#volumes:
+## Uncomment the following lines if you want to use a volume for the database
+# volumes:
 #  pgdata: { }
 #  cache: { }
