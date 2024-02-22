@@ -21,7 +21,7 @@ services:
         max-file: "10"
 
 
-  #   To enable postgres uncomment the following lines
+  ##   To enable postgres uncomment the following lines
   #  http://pgconfigurator.cybertec.at/ For Postgres Configuration
   # pg_database:
   #  image: postgres:13-alpine
@@ -58,7 +58,7 @@ services:
   #  image: "api"
   #  stop_signal: SIGINT
   #  build:
-  #    context: ./infrastructure
+  #    context: ./infrastructure/api
   #    dockerfile: Dockerfile
   #  working_dir: "/usr/src/app/api"
   #  volumes:
