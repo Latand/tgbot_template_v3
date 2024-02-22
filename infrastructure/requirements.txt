@@ -1,5 +1,8 @@
-aiogram~=3.0
 environs~=9.0
 uvicorn
 fastapi
 betterlogging
+sqlalchemy~=2.0
+alembic~=1.0
+asyncpg
+
