@@ -19,6 +19,7 @@ class DatabaseMiddleware(BaseMiddleware):
         async with self.session_pool() as session:
             repo = RequestsRepo(session)
 
+            # Retrieve or create a user using the new User model structure
             user = await repo.users.get_or_create_user(
                 event.from_user.id,
                 event.from_user.full_name,

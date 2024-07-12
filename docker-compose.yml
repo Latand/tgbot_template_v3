@@ -36,6 +36,10 @@ services:
   #           -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200
   #           -c work_mem=3495kB -c min_wal_size=1GB -c max_wal_size=4GB -c max_worker_processes=2
   #           -c max_parallel_workers_per_gather=1 -c max_parallel_workers=2 -c max_parallel_maintenance_workers=1"
+  #  environment:
+  #    POSTGRES_USER: ${DB_USER}
+  #    POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #    POSTGRES_DB: ${DB_DATABASE}
   #  env_file:
   #    - '.env'
   #  logging:
@@ -45,10 +49,10 @@ services:
   #      max-file: "10"
 
   ##  To enable redis cache uncomment the following lines
-  # redis_cache:
+  #redis_cache:
   #  image: redis:6.2-alpine
   #  restart: always
-  #  command: redis-server --port $REDIS_PORT --save 20 1 --loglevel warning --requirepass $REDIS_PASSWORD
+  #  command: redis-server --port ${REDIS_PORT} --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
   #  env_file:
   #    - ".env"
   #  volumes:

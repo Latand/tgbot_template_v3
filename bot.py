@@ -3,12 +3,13 @@ import logging
 
 import betterlogging as bl
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 
-from tgbot.config import load_config, Config
+from tgbot.config import load_config
 from tgbot.handlers import routers_list
-from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.services import broadcaster
 
 
@@ -16,19 +17,17 @@ async def on_startup(bot: Bot, admin_ids: list[int]):
     await broadcaster.broadcast(bot, admin_ids, "Бот був запущений")
 
 
-def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=None):
+def register_global_middlewares(dp: Dispatcher, session_pool=None):
     """
     Register global middlewares for the given dispatcher.
     Global middlewares here are the ones that are applied to all the handlers (you specify the type of update)
 
     :param dp: The dispatcher instance.
     :type dp: Dispatcher
-    :param config: The configuration object from the loaded configuration.
     :param session_pool: Optional session pool object for the database using SQLAlchemy.
     :return: None
     """
     middleware_types = [
-        ConfigMiddleware(config),
         # DatabaseMiddleware(session_pool),
     ]
 
@@ -86,18 +85,19 @@ def get_storage(config):
 async def main():
     setup_logging()
 
-    config = load_config(".env")
+    config = load_config()
     storage = get_storage(config)
 
-    bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
+    default = DefaultBotProperties(parse_mode=ParseMode.HTML)
+    bot = Bot(token=config.tg_bot.token.get_secret_value(), default=default)
     dp = Dispatcher(storage=storage)
 
     dp.include_routers(*routers_list)
 
-    register_global_middlewares(dp, config)
+    register_global_middlewares(dp)
 
     await on_startup(bot, config.tg_bot.admin_ids)
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, config=config)
 
 
 if __name__ == "__main__":

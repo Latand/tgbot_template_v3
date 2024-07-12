@@ -2,6 +2,8 @@ aiogram~=3.0
 environs~=9.0
 redis
 betterlogging
+pydantic~=2.7.1
+pydantic-settings==2.2.1
 
 # # For enabling api:
 # backoff
