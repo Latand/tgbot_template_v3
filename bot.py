@@ -4,6 +4,7 @@ from typing import Union
 
 import betterlogging as bl  # type: ignore
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 
@@ -90,7 +91,11 @@ async def main() -> None:
     config = load_config(".env")
     storage = get_storage(config)
 
-    bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
+    bot = Bot(
+        token=config.tg_bot.token,
+        default=DefaultBotProperties(parse_mode='HTML')
+    )
+
     dp = Dispatcher(storage=storage)
 
     dp.include_routers(*routers_list)
