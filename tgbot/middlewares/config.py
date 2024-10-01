@@ -11,7 +11,7 @@ class ConfigMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
+        event: Message, #type: ignore
         data: Dict[str, Any],
     ) -> Any:
         data["config"] = self.config
