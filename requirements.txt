@@ -12,3 +12,10 @@ betterlogging
 # sqlalchemy~=2.0
 # alembic~=1.0
 # asyncpg
+
+# # Linters
+# flake8
+# pylint
+
+# # Type checkers:
+# mypy
