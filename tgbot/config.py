@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 from environs import Env
 
@@ -74,11 +74,11 @@ class TgBot:
     """
 
     token: str
-    admin_ids: list[int]
+    admin_ids: list[Union[str, int]]
     use_redis: bool
 
     @staticmethod
-    def from_env(env: Env):
+    def from_env(env: Env) -> "TgBot":
         """
         Creates the TgBot object from environment variables.
         """
@@ -144,7 +144,7 @@ class Miscellaneous:
         A string used to hold other various parameters as required (default is None).
     """
 
-    other_params: str = None
+    other_params: Optional[str] = None
 
 
 @dataclass
@@ -172,7 +172,7 @@ class Config:
     redis: Optional[RedisConfig] = None
 
 
-def load_config(path: str = None) -> Config:
+def load_config(path: Optional[str] = None) -> Config:
     """
     This function takes an optional file path as input and returns a Config object.
     :param path: The path of env file from where to load the configuration variables.

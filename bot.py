@@ -1,22 +1,23 @@
 import asyncio
 import logging
+from typing import Union
 
-import betterlogging as bl
+import betterlogging as bl  # type: ignore
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
+from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 
-from tgbot.config import load_config, Config
+from tgbot.config import Config, load_config
 from tgbot.handlers import routers_list
 from tgbot.middlewares.config import ConfigMiddleware
 from tgbot.services import broadcaster
 
 
-async def on_startup(bot: Bot, admin_ids: list[int]):
+async def on_startup(bot: Bot, admin_ids: list[Union[str, int]]) -> None:
     await broadcaster.broadcast(bot, admin_ids, "Бот був запущений")
 
 
-def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=None):
+def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=None) -> None:
     """
     Register global middlewares for the given dispatcher.
     Global middlewares here are the ones that are applied to all the handlers (you specify the type of update)
@@ -37,7 +38,7 @@ def register_global_middlewares(dp: Dispatcher, config: Config, session_pool=Non
         dp.callback_query.outer_middleware(middleware_type)
 
 
-def setup_logging():
+def setup_logging() -> None:
     """
     Set up logging configuration for the application.
 
@@ -63,7 +64,7 @@ def setup_logging():
     logger.info("Starting bot")
 
 
-def get_storage(config):
+def get_storage(config) -> RedisStorage | MemoryStorage:
     """
     Return storage based on the provided configuration.
 
@@ -83,7 +84,7 @@ def get_storage(config):
         return MemoryStorage()
 
 
-async def main():
+async def main() -> None:
     setup_logging()
 
     config = load_config(".env")
