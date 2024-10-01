@@ -11,7 +11,7 @@ class UserRepo(BaseRepo):
         self,
         user_id: int,
         full_name: str,
-        language: str,
+        language: Optional[str],
         username: Optional[str] = None,
     ):
         """
